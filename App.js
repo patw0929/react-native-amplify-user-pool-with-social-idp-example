@@ -13,6 +13,8 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
+import axios from 'axios';
+import qs from 'qs';
 
 const styles = StyleSheet.create({
   containerStyle: {
@@ -106,7 +108,34 @@ export default class App extends Component<Props, State> {
     Linking.removeEventListener('url', this.handleOpenURL);
   }
 
-  handleOpenURL(event) {
+  getIdToken = async code => {
+    const data = qs.stringify({
+      grant_type: 'authorization_code',
+      client_id: '2aj40u0t7oq0ffjgq3unf364iq',
+      redirect_uri: 'rnampexample://callback/',
+      code,
+    });
+
+    return await axios({
+      method: 'post',
+      url: 'https://amplify-social-idp-example.auth.us-west-2.amazoncognito.com/oauth2/token',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      data,
+    }).then(response => {
+      console.log(response.data);
+
+      return response;
+    })
+    .catch(error => {
+      console.log(error);
+
+      return error;
+    });
+  };
+
+  handleOpenURL = async (event) => {
     console.log(event.url);
     const parts = /.*?:\/\/(\w+)(\/.*)?/g.exec(event.url);
 
@@ -114,8 +143,13 @@ export default class App extends Component<Props, State> {
 
     if (parts[1] === 'callback') {
       const part2 = (parts[2] || '').replace('/', '');
+      const code = part2.replace('?code=', '');
 
-      console.log(part2);
+      console.log(code);
+
+      const result = await this.getIdToken(code);
+
+      console.log(result.data);
     }
   }
 
