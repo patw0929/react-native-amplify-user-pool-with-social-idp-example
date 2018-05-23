@@ -10,6 +10,7 @@
     "aws-amplify": "^0.4.1",
     "aws-amplify-react-native": "^0.2.11",
     "axios": "^0.18.0",
+    "qs": "^6.5.2",
     "react": "16.3.1",
     "react-native": "0.55.4"
   },
