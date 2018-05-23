@@ -2,15 +2,13 @@
 apps:
   react-native: !com.amazonaws.mobilehub.v0.AppDO {}
 features:
-  content-delivery: !com.amazonaws.mobilehub.v0.ContentDelivery 
+  sign-in: !com.amazonaws.mobilehub.v0.SignIn 
     attributes:
       enabled: true
-      visibility: public-global
+      optional-sign-in: true
     components:
-      release: !com.amazonaws.mobilehub.v0.Bucket {}
-  mobile-analytics: !com.amazonaws.mobilehub.v0.Pinpoint 
-    components:
-      analytics: !com.amazonaws.mobilehub.v0.PinpointAnalytics {}
-  sign-in: !com.amazonaws.mobilehub.v0.SignIn {}
+      sign-in-user-pools: !com.amazonaws.mobilehub.v0.UserPoolsIdentityProvider 
+        attributes:
+          user-pool-id: us-west-2_Pxq8V8xCf
 name: react-native-amplify-user-pool-with-social-idp
 region: us-west-1
