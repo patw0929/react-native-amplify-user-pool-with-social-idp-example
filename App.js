@@ -143,7 +143,7 @@ export default class App extends Component<Props, State> {
 
     if (parts[1] === 'callback') {
       const part2 = (parts[2] || '').replace('/', '');
-      const code = part2.replace('?code=', '');
+      const code = part2.replace('?code=', '').replace('#_=_', '');
 
       console.log(code);
 
