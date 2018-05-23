@@ -123,10 +123,11 @@ export default class App extends Component<Props, State> {
     const PROVIDER = capitalizeFirstLetter(method);
     const DOMAIN_PREFIX = 'amplify-social-idp-example';
     const REGION = 'us-west-2';
+    const RESPONSE_TYPE = 'code';
     const REDIRECT_URI = 'rnampexample://callback/';
     const CLIENT_ID = '2aj40u0t7oq0ffjgq3unf364iq';
     const SCOPE = 'email+profile+openid';
-    const USER_POOL_AUTHORIZE_URL = `https://${DOMAIN_PREFIX}.auth.${REGION}.amazoncognito.com/oauth2/authorize?identity_provider=${PROVIDER}&redirect_uri=${REDIRECT_URI}&response_type=token&client_id=${CLIENT_ID}&scope=${SCOPE}`;
+    const USER_POOL_AUTHORIZE_URL = `https://${DOMAIN_PREFIX}.auth.${REGION}.amazoncognito.com/oauth2/authorize?identity_provider=${PROVIDER}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&client_id=${CLIENT_ID}&scope=${SCOPE}`;
 
     Linking.canOpenURL(USER_POOL_AUTHORIZE_URL)
       .then(supported => {
