@@ -85,21 +85,19 @@ const styles = StyleSheet.create({
   },
 });
 
+const DOMAIN_PREFIX = 'amplify-social-idp-example';
+const REGION = 'us-west-2';
+const RESPONSE_TYPE = 'code';
+const REDIRECT_URI = 'rnampexample://callback/';
+const CLIENT_ID = '2aj40u0t7oq0ffjgq3unf364iq';
+const SCOPE = 'email+profile+openid';
+
 const capitalizeFirstLetter = str => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
 type Props = {};
-type State = {
-  isLoading: boolean,
-  loggedIn: boolean,
-};
-export default class App extends Component<Props, State> {
-  state = {
-    isLoading: false,
-    loggedIn: false,
-  };
-
+export default class App extends Component<Props> {
   componentDidMount() {
     Linking.addEventListener('url', this.handleOpenURL);
   }
@@ -111,14 +109,14 @@ export default class App extends Component<Props, State> {
   getIdToken = async code => {
     const data = qs.stringify({
       grant_type: 'authorization_code',
-      client_id: '2aj40u0t7oq0ffjgq3unf364iq',
-      redirect_uri: 'rnampexample://callback/',
+      client_id: CLIENT_ID,
+      redirect_uri: REDIRECT_URI,
       code,
     });
 
     return await axios({
       method: 'post',
-      url: 'https://amplify-social-idp-example.auth.us-west-2.amazoncognito.com/oauth2/token',
+      url: `https://amplify-social-idp-example.auth.${REGION}.amazoncognito.com/oauth2/token`,
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
@@ -150,17 +148,13 @@ export default class App extends Component<Props, State> {
       const result = await this.getIdToken(code);
 
       console.log(result.data);
+
+      this.getOpenIdToken(result.data.id_token);
     }
   }
 
   handleLogin = (method: 'facebook' | 'google') => {
     const PROVIDER = capitalizeFirstLetter(method);
-    const DOMAIN_PREFIX = 'amplify-social-idp-example';
-    const REGION = 'us-west-2';
-    const RESPONSE_TYPE = 'code';
-    const REDIRECT_URI = 'rnampexample://callback/';
-    const CLIENT_ID = '2aj40u0t7oq0ffjgq3unf364iq';
-    const SCOPE = 'email+profile+openid';
     const USER_POOL_AUTHORIZE_URL = `https://${DOMAIN_PREFIX}.auth.${REGION}.amazoncognito.com/oauth2/authorize?identity_provider=${PROVIDER}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&client_id=${CLIENT_ID}&scope=${SCOPE}`;
 
     Linking.canOpenURL(USER_POOL_AUTHORIZE_URL)
@@ -177,22 +171,11 @@ export default class App extends Component<Props, State> {
   };
 
   render() {
-    const { loggedIn } = this.props;
-
     return (
       <View style={styles.containerStyle}>
         <Text style={styles.headingText}>React-Native Cognito Login Example</Text>
 
-        {loggedIn && <View style={styles.welcome}>
-          <Text style={styles.welcomeText}>
-            You're logged in!
-          </Text>
-          <TouchableOpacity onPress={() => this.handleLogout()} style={styles.logoutButton}>
-            <Text style={styles.logoutButtonText}>Logout</Text>
-          </TouchableOpacity>
-        </View>}
-
-        {!loggedIn && <View>
+        <View>
           <TouchableOpacity onPress={() => this.handleLogin('facebook')} style={styles.facebookLoginButton}>
             <Text style={styles.facebookLoginButtonText}>Login with Facebook</Text>
           </TouchableOpacity>
@@ -200,7 +183,7 @@ export default class App extends Component<Props, State> {
           <TouchableOpacity onPress={() => this.handleLogin('google')} style={styles.googleLoginButton}>
             <Text style={styles.googleLoginButtonText}>Login with Google</Text>
           </TouchableOpacity>
-        </View>}
+        </View>
       </View>
     );
   }
