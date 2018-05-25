@@ -148,8 +148,6 @@ export default class App extends Component<Props> {
       const result = await this.getIdToken(code);
 
       console.log(result.data);
-
-      this.getOpenIdToken(result.data.id_token);
     }
   }
 
