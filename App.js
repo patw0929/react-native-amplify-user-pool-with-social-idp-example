@@ -99,7 +99,21 @@ const capitalizeFirstLetter = str => {
 type Props = {};
 export default class App extends Component<Props> {
   componentDidMount() {
-    Linking.addEventListener('url', this.handleOpenURL);
+    Linking.addEventListener('url', this._handleOpenURL);
+
+    if (Platform.OS === 'ios') {
+      Linking.addEventListener('url', this._handleOpenURL);
+    } else if (Platform.OS === 'android') {
+      Linking.addEventListener('url', this._handleOpenURL);
+
+      Linking.getInitialURL()
+        .then(url => {
+          if (url) {
+            this.handleOpenURL(url);
+          }
+        })
+        .catch(err => console.error('An error occurred', err));
+    }
   }
 
   componentWillUnmount() {
@@ -133,9 +147,8 @@ export default class App extends Component<Props> {
     });
   };
 
-  handleOpenURL = async (event) => {
-    console.log(event.url);
-    const parts = /.*?:\/\/(\w+)(\/.*)?/g.exec(event.url);
+  handleOpenURL = async (url) => {
+    const parts = /.*?:\/\/(\w+)(\/.*)?/g.exec(url);
 
     console.log(parts);
 
@@ -150,6 +163,10 @@ export default class App extends Component<Props> {
       console.log(result.data);
     }
   }
+
+  _handleOpenURL = event => {
+    this.handleOpenURL(event.url);
+  };
 
   handleLogin = (method: 'facebook' | 'google') => {
     const PROVIDER = capitalizeFirstLetter(method);
